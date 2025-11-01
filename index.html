@@ -1,66 +1,61 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Project Evaluation Platform</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    .action-btn {
-      background: var(--lavender-dark);
-      color: #fff;
-      padding: 8px 14px;
-      border-radius: 12px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-      text-align: center;
-      display: inline-block;
-      margin-bottom: 16px;
-    }
-    .action-btn:hover { background: var(--lavender); }
-
-    .project-row { margin-bottom: 18px; }
-    .project-row div { margin-bottom: 6px; }
-  </style>
+<meta charset="utf-8">
+<title>Project Evaluation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="styles.css">
+<style>
+.action-btn { background: var(--lavender-dark); color: #fff; padding: 8px 14px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; text-align: center; display: inline-block; margin-top: 8px; }
+.action-btn:hover { background: #a68ed6; }
+.project-row { margin-bottom: 18px; }
+.project-row div { margin-bottom: 6px; }
+.container { max-width: 1000px; margin:28px auto; padding:16px; }
+.header { text-align:center; font-size:1.8rem; font-weight:700; margin-bottom:8px; }
+.footer-note { text-align:center; font-size:1.2rem; font-weight:600; margin-bottom:24px; color:#555; }
+</style>
 </head>
 <body>
-  <header class="header">
-    <h1>Project Evaluation Platform</h1>
-  </header>
 
-  <main class="container">
-    <div style="text-align:center;">
-      <a class="action-btn" href="allResults.html">View All Project Results</a>
+<header class="header">Project Evaluation</header>
+<div class="footer-note">© Elixir Hub 2025</div>
+
+<main class="container">
+  <div class="card">
+    <h3 style="text-align:center;">Project List</h3>
+    <div id="projectsArea"></div>
+  </div>
+
+  <div style="text-align:center; margin-top:24px;">
+    <a class="action-btn" href="allResults.html">View All Project Results</a>
+  </div>
+</main>
+
+<script src="app.js"></script>
+<script>
+const params = new URLSearchParams(window.location.search);
+const evaluator = params.get("evaluator");
+if(!evaluator){
+  location.href = "login.html"; 
+}
+
+const projectsArea = document.getElementById('projectsArea');
+const projects = APP.INITIAL_PROJECTS;
+
+projects.forEach((p, i) => {
+  const [sectionPart, namesPart] = p.description.split(':');
+  const tr = document.createElement('div');
+  tr.className = 'project-row';
+  tr.innerHTML = `
+    <div style="text-align:center; font-weight:600; font-size:1.1rem;">${p.name}</div>
+    <div style="text-align:center; color:#8a6bbf; font-size:1rem;">${sectionPart.trim()}</div>
+    <div style="text-align:center; font-size:0.95rem; color:#444;">${namesPart ? namesPart.trim() : ''}</div>
+    <div style="text-align:center; margin-top:8px;">
+      <a class="action-btn" href="evaluate.html?project=${i}&evaluator=${encodeURIComponent(evaluator)}">Evaluate</a>
     </div>
-
-    <div class="card">
-      <h3 style="text-align:center;">Project List</h3>
-      <div id="projectsArea"></div>
-    </div>
-    <div class="footer">© 2025</div>
-  </main>
-
-  <script src="app.js"></script>
-  <script>
-    const projectsArea = document.getElementById('projectsArea');
-    const projects = APP.INITIAL_PROJECTS;
-
-    projects.forEach((p, i) => {
-      const [sectionPart, namesPart] = p.description.split(':');
-      const tr = document.createElement('div');
-      tr.className = 'project-row';
-      tr.innerHTML = `
-        <div style="text-align:center; font-weight:600; font-size:1.1rem;">${p.name}</div>
-        <div style="text-align:center; color:var(--lavender-dark); font-size:1rem;">${sectionPart.trim()}</div>
-        <div style="text-align:center; font-size:0.95rem; color:#444;">${namesPart ? namesPart.trim() : ''}</div>
-        <div style="text-align:center; margin-top:8px;">
-          <a class="action-btn" href="evaluate.html?project=${i}">Evaluate</a>
-        </div>
-      `;
-      projectsArea.appendChild(tr);
-    });
-  </script>
+  `;
+  projectsArea.appendChild(tr);
+});
+</script>
 </body>
 </html>
