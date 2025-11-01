@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html> 
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -22,32 +22,10 @@
       z-index: 1000;
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
-    select {
-      width: 100%;
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      background: #fff;
-    }
-    .instructions {
-      direction: ltr;
-      text-align: left;
-    }
-    .instructions ul,
-    .instructions ol {
-      padding-left: 20px;
-    }
-    .field label,
-    #evaluatorName,
-    [data-key] {
-      direction: ltr;
-      text-align: left;
-    }
-    #projTitle,
-    #projDesc,
-    #studentsNames {
-      text-align: center !important;
-    }
+    .instructions { direction: ltr; text-align: left; }
+    .instructions ul, .instructions ol { padding-left: 20px; }
+    .field label, [data-key] { direction: ltr; text-align: left; }
+    #projTitle, #projDesc, #studentsNames { text-align: center !important; }
   </style>
 </head>
 <body>
@@ -60,14 +38,6 @@
       <h3 id="projTitle"></h3>
       <p id="studentsNames" class="small"></p>
       <p id="projDesc" class="small"></p>
-
-      <div class="field">
-        <label>Evaluator Name</label>
-        <select id="evaluatorName" required>
-          <option value="" disabled selected hidden>Select Evaluator</option>
-          <option value="Iman Jaberti">Iman Jaberti</option>
-        </select>
-      </div>
 
       <div class="card instructions" style="background:#f9f7fd; border:none; padding:10px; margin-bottom:18px;">
         <strong>Instructions for Evaluators:</strong>
@@ -82,7 +52,7 @@
             <li>4 — Fair</li>
             <li>2 — Poor</li>
             <li>0 — 0</li>
-          </ul>
+            </ul>
         </ol>
       </div>
 
@@ -97,15 +67,15 @@
   <script>
     const params = new URLSearchParams(location.search);
     const id = params.get("project");
+    const evaluator = params.get("evaluator"); 
     const project = APP.INITIAL_PROJECTS[id];
-    if (!project) { alert("Project not found"); location = "index.html"; }
+    if (!project || !evaluator) { alert("Project or evaluator not found"); location = "login.html"; }
 
     document.getElementById("projTitle").textContent = project.name;
     document.getElementById("projDesc").textContent = project.description;
     document.getElementById("studentsNames").textContent = project.students || '';
 
     const container = document.getElementById("criteriaList");
-
     const ratingOptions = `
       <option value="10">10</option>
       <option value="8">8</option>
@@ -126,10 +96,7 @@
     document.getElementById("form").addEventListener("submit", e => {
       e.preventDefault();
 
-      const name = document.getElementById("evaluatorName").value;
-      if (!name) { alert("Please select an evaluator"); return; }
-
-      const existing = APP.loadRatings(id).find(r => r.evaluatorName === name);
+      const existing = APP.loadRatings(id).find(r => r.evaluatorName === evaluator);
       if (existing) { alert("You have already evaluated this project"); return; }
 
       const scores = {};
@@ -137,9 +104,9 @@
         scores[sel.dataset.key] = Number(sel.value);
       });
 
-      APP.addRating(id, name, scores);
+      APP.addRating(id, evaluator, scores);
       alert("✅ Evaluation saved successfully");
-      location.href = `evaluate.html?project=${id}`;
+      location.href = `index.html`;
     });
   </script>
 </body>
